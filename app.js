@@ -7,19 +7,19 @@ const { v4: uuidv4 } = require('uuid');
 const app = express();
 const PORT = 3000;
 
-// Global error handler for visibility
+
 process.on('uncaughtException', function (err) {
   console.error('Uncaught Exception:', err);
 });
 
-// Middleware for parsing JSON
+// Middleware
 app.use(express.json());
 
-// Create uploads directory if it doesn't exist
+
 const UPLOADS_DIR = path.join(__dirname, 'uploads');
 if (!fs.existsSync(UPLOADS_DIR)) fs.mkdirSync(UPLOADS_DIR);
 
-// Multer setup
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, UPLOADS_DIR);
@@ -45,12 +45,12 @@ const upload = multer({
   }
 });
 
-// Test route
+
 app.get('/', (req, res) => {
   res.send(' Server is up and running!');
 });
 
-// Upload API
+
 app.put('/upload', upload.single('file'), (req, res) => {
   const file = req.file;
   if (!file) return res.status(400).json({ error: 'No file uploaded' });
@@ -65,7 +65,7 @@ app.put('/upload', upload.single('file'), (req, res) => {
   });
 });
 
-// Delete API
+
 app.delete('/delete-file/:id', (req, res) => {
   const id = req.params.id;
   const file = fs.readdirSync(UPLOADS_DIR).find(f => f.startsWith(id));
@@ -75,7 +75,7 @@ app.delete('/delete-file/:id', (req, res) => {
   res.json({ message: `File ${file} deleted successfully.` });
 });
 
-// Rename API
+
 app.post('/rename-file', (req, res) => {
   const { id, newName } = req.body;
   if (!id || !newName) return res.status(400).json({ error: 'ID and newName required' });
@@ -93,7 +93,7 @@ app.post('/rename-file', (req, res) => {
   res.json({ message: 'File renamed successfully', newFilename: newFile });
 });
 
-// Start server
+
 console.log('Starting app...');
 app.listen(PORT, () => {
   console.log(' Server running on http://localhost:3000');
